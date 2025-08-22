@@ -22,6 +22,8 @@
 	const TOP_THRESHOLD = 2 / 5;
 	const BOTTOM_THRESHOLD = 3 / 5;
 
+	let transitionTimeoutId: number | null = null;
+
 	function handlePointerDown(e: PointerEvent) {
 		const target = e.target as HTMLElement;
 		if (!$handle || !target.closest('[data-role="handle"]') || !$content) return;
@@ -65,10 +67,20 @@
 			if (propertyName === 'transform') {
 				handlePointerAndKeyboardDragEnd();
 				$content?.removeEventListener('transitionend', handleTransitionEnd);
+				if (transitionTimeoutId) {
+					clearTimeout(transitionTimeoutId);
+					transitionTimeoutId = null;
+				}
 			}
 		}
 
 		$content?.addEventListener('transitionend', handleTransitionEnd);
+		// Ensure the drag operation completes even if `transitionend` doesn’t fire.
+		transitionTimeoutId = setTimeout(() => {
+			handlePointerAndKeyboardDragEnd();
+			$content?.removeEventListener('transitionend', handleTransitionEnd);
+			transitionTimeoutId = null;
+		}, 400 + 100);
 	}
 
 	async function handlePointerAndKeyboardDragEnd() {
