@@ -1,0 +1,6 @@
+export { default as Root } from '$lib/components/DraggableDrawer.svelte';
+export { default as Handle } from '$lib/components/DraggableDrawerHandle.svelte';
+export { default as Content } from '$lib/components/DraggableDrawerContent.svelte';
+export { default as Backdrop } from '$lib/components/DraggableDrawerBackdrop.svelte';
+
+export type { DraggableDrawerRootProps as RootProps } from '$lib/types/index.js';
