@@ -1,13 +1,24 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
+	import type { RootProps } from '$lib/exports.js';
 	import {
 		setContent,
 		setContentOrigin,
 		setDragState,
 		setHandle,
-		setIsExpanded,
 		setPointer,
 		setPointerOrigin,
+		setRootProps,
 	} from '$lib/stores/index.js';
+
+	export let isOpen: RootProps['isOpen'] = false;
+
+	const rootProps = setRootProps({ isOpen });
+	$: $rootProps = { isOpen };
+	const unsubscribe = rootProps.subscribe((value: RootProps) => {
+		isOpen = value.isOpen;
+	});
+	onDestroy(unsubscribe);
 
 	let pointerId: PointerEvent['pointerId'] | null = null;
 	const pointer = setPointer(null);
@@ -17,7 +28,6 @@
 	const handle = setHandle(null);
 
 	const dragState = setDragState('idle');
-	const isExpanded = setIsExpanded(false);
 
 	const TOP_THRESHOLD = 2 / 5;
 	const BOTTOM_THRESHOLD = 3 / 5;
@@ -52,7 +62,7 @@
 		$dragState = 'drag';
 
 		$pointer = { x: clientX, y: clientY };
-		$isExpanded =
+		$rootProps.isOpen =
 			$pointerOrigin.y > window.innerHeight / 2
 				? clientY < window.innerHeight * BOTTOM_THRESHOLD
 				: clientY < window.innerHeight * TOP_THRESHOLD;
@@ -101,10 +111,6 @@
 		inset: 0;
 		pointer-events: none;
 		z-index: 9999;
-
-		& > * {
-			pointer-events: auto;
-		}
 
 		&:not(:has([data-role='handle'])),
 		& [data-role='handle'] {

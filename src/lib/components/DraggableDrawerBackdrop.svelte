@@ -1,21 +1,20 @@
 <script lang="ts">
-	import { getPointer } from '$lib/stores/index.js';
-	import { getDragState, getIsExpanded } from '$lib/stores/states.js';
+	import { getPointer, getRootProps } from '$lib/stores/index.js';
+	import { getDragState } from '$lib/stores/states.js';
 
 	let offsetHeight: number;
+
+	const rootProps = getRootProps();
 
 	const pointer = getPointer();
 
 	const dragState = getDragState();
-	const isExpanded = getIsExpanded();
 
 	function getStyleOpacity(...args: unknown[]) {
 		if ($dragState === 'drag' && $pointer) {
 			return ($pointer.y / offsetHeight / 2 - 0.5) * -1;
 		}
-
-		if ($isExpanded) return 0.5;
-
+		if ($rootProps.isOpen) return 0.5;
 		return 0;
 	}
 
@@ -24,11 +23,11 @@
 		return 'none';
 	}
 
-	$: styleOpacity = getStyleOpacity($pointer, $dragState, $isExpanded);
+	$: styleOpacity = getStyleOpacity($pointer, $dragState, $rootProps.isOpen);
 	$: styleTransition = getStyleTransition($dragState);
 
 	const handleClick = () => {
-		$isExpanded = false;
+		$rootProps.isOpen = false;
 	};
 </script>
 
@@ -37,6 +36,7 @@
 	class="sdd-backdrop"
 	style:opacity={styleOpacity}
 	style:transition={styleTransition}
+	style:pointer-events={$rootProps.isOpen ? 'auto' : 'none'}
 	aria-hidden="true"
 	on:click={handleClick}
 ></div>

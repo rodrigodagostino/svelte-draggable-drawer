@@ -7,10 +7,3 @@ export function setDragState(context: DragState) {
 export function getDragState() {
 	return getWritableContext<DragState>('dragState');
 }
-
-export function setIsExpanded(context: boolean) {
-	return setWritableContext<boolean>('isExpanded', context);
-}
-export function getIsExpanded() {
-	return getWritableContext<boolean>('isExpanded');
-}

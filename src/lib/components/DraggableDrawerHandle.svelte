@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { getHandle, getIsExpanded } from '$lib/stores/index.js';
+	import { getHandle, getRootProps } from '$lib/stores/index.js';
 
 	let handleRef: HTMLButtonElement;
 
 	const handle = getHandle();
 
-	const isExpanded = getIsExpanded();
+	const rootProps = getRootProps();
 
 	onMount(() => {
 		$handle = handleRef;
@@ -14,7 +14,7 @@
 
 	const handleKeyUp = ({ key }: KeyboardEvent) => {
 		if (key === 'Enter' || key === ' ') {
-			$isExpanded = !$isExpanded;
+			$rootProps.isOpen = !$rootProps.isOpen;
 		}
 	};
 </script>
