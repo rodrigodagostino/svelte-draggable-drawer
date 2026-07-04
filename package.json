@@ -1,7 +1,17 @@
 {
 	"name": "@rodrigodagostino/svelte-draggable-drawer",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"author": "Rodrigo D’Agostino <rodrigo.dagostino@proton.me>",
+	"keywords": [
+		"draggable",
+		"drawer",
+		"drag",
+		"drop",
+		"dnd",
+		"accessible",
+		"svelte",
+		"sveltekit"
+	],
 	"license": "MIT",
 	"type": "module",
 	"repository": {
