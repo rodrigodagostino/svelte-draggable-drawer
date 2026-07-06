@@ -9,6 +9,7 @@
 		"drop",
 		"dnd",
 		"accessible",
+		"a11y",
 		"svelte",
 		"sveltekit"
 	],
@@ -44,13 +45,13 @@
 		"!dist/**/*.spec.*"
 	],
 	"peerDependencies": {
-		"svelte": "^4.0.0"
+		"svelte": "^5.0.0"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "7.0.1",
 		"@sveltejs/kit": "2.69.1",
 		"@sveltejs/package": "2.5.8",
-		"@sveltejs/vite-plugin-svelte": "3.1.2",
+		"@sveltejs/vite-plugin-svelte": "7.1.2",
 		"@types/eslint": "9.6.1",
 		"@types/node": "22.20.0",
 		"eslint": "9.39.4",
@@ -59,14 +60,12 @@
 		"eslint-plugin-svelte": "3.20.0",
 		"globals": "17.7.0",
 		"prettier": "3.9.4",
-		"prettier-plugin-svelte": "3.5.2",
+		"prettier-plugin-svelte": "4.1.1",
 		"publint": "0.3.21",
-		"svelte": "4.2.20",
+		"svelte": "5.56.4",
 		"svelte-check": "4.7.1",
 		"typescript": "6.0.3",
 		"typescript-eslint": "8.62.1",
-		"vite": "5.4.21"
-	},
-	"svelte": "./dist/index.js",
-	"types": "./dist/index.d.ts"
+		"vite": "8.1.3"
+	}
 }
