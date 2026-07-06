@@ -1,17 +1,18 @@
 {
 	"name": "@rodrigodagostino/svelte-draggable-drawer",
+	"description": "Create accessible, draggable drawers in Svelte, with keyboard, mouse, and touch support.",
 	"version": "0.1.0",
 	"author": "Rodrigo D’Agostino <rodrigo.dagostino@proton.me>",
 	"keywords": [
 		"draggable",
 		"drawer",
 		"drag",
-		"drop",
-		"dnd",
+		"touch",
 		"accessible",
 		"a11y",
 		"svelte",
-		"sveltekit"
+		"sveltekit",
+		"component"
 	],
 	"license": "MIT",
 	"type": "module",
@@ -21,15 +22,22 @@
 	},
 	"scripts": {
 		"dev": "vite dev",
-		"build": "vite build && npm run package",
+		"build": "vite build && npm run prepack",
 		"preview": "vite preview",
-		"package": "svelte-kit sync && svelte-package && publint",
-		"prepublishOnly": "npm run package",
+		"prepare": "svelte-kit sync || echo ''",
+		"prepack": "svelte-kit sync && svelte-package && publint",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write ."
 	},
+	"files": [
+		"dist",
+		"!dist/**/*.test.*",
+		"!dist/**/*.spec.*"
+	],
+	"svelte": "./dist/index.js",
+	"types": "./dist/index.d.ts",
 	"exports": {
 		".": {
 			"types": "./dist/index.d.ts",
@@ -39,24 +47,18 @@
 			"import": "./dist/*.css"
 		}
 	},
-	"files": [
-		"dist",
-		"!dist/**/*.test.*",
-		"!dist/**/*.spec.*"
-	],
 	"peerDependencies": {
 		"svelte": "^5.0.0"
 	},
 	"devDependencies": {
+		"@eslint/js": "10.0.1",
 		"@sveltejs/adapter-auto": "7.0.1",
 		"@sveltejs/kit": "2.69.1",
 		"@sveltejs/package": "2.5.8",
 		"@sveltejs/vite-plugin-svelte": "7.1.2",
-		"@types/eslint": "9.6.1",
-		"@types/node": "22.20.0",
-		"eslint": "9.39.4",
-		"eslint-config-prettier": "9.1.2",
-		"eslint-plugin-prettier": "5.5.6",
+		"@types/node": "^22",
+		"eslint": "10.6.0",
+		"eslint-config-prettier": "10.1.8",
 		"eslint-plugin-svelte": "3.20.0",
 		"globals": "17.7.0",
 		"prettier": "3.9.4",
