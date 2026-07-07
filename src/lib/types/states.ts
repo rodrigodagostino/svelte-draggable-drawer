@@ -1,6 +1,6 @@
-import type { DraggableDrawerRootProps as RootProps } from './props.js';
+import type { DrawerRootProps as RootProps } from './props.js';
 
-export interface DraggableDrawerRootStateContext {
+export interface DrawerRootStateContext {
 	ref: HTMLUListElement | null;
 	props: RootProps;
 	dragState: 'idle' | 'drag-start' | 'drag' | 'drop';

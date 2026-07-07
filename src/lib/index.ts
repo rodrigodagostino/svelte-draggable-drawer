@@ -1,1 +1,1 @@
-export * as DraggableDrawer from './exports.js';
+export * as Drawer from './exports.js';

@@ -1,7 +1,7 @@
 import { getContext, setContext } from 'svelte';
-import type { DraggableDrawerRootStateContext as Context } from '$lib/types/index.js';
+import type { DrawerRootStateContext as Context } from '$lib/types/index.js';
 
-class DraggableDrawerRootState {
+class DrawerRootState {
 	props: Context['props'] = $state({});
 	dragState: Context['dragState'] = $state('idle');
 	content: Context['content'] = $state(null);
@@ -11,12 +11,12 @@ class DraggableDrawerRootState {
 	contentOrigin: Context['contentOrigin'] = $state.raw(null);
 }
 
-const KEY = Symbol('DraggableDrawer.RootState');
+const KEY = Symbol('Drawer.RootState');
 
-export function setDraggableDrawerRootState() {
-	return setContext(KEY, new DraggableDrawerRootState());
+export function setDrawerRootState() {
+	return setContext(KEY, new DrawerRootState());
 }
 
-export function getDraggableDrawerRootState() {
-	return getContext<ReturnType<typeof setDraggableDrawerRootState>>(KEY);
+export function getDrawerRootState() {
+	return getContext<ReturnType<typeof setDrawerRootState>>(KEY);
 }
