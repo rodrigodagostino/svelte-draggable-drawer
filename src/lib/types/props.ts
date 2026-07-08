@@ -15,3 +15,7 @@ export interface DrawerContentHandleProps {
 	ref?: HTMLButtonElement | null;
 	children?: Snippet;
 }
+
+export interface DrawerBackdropProps {
+	ref?: HTMLDivElement | null;
+}
