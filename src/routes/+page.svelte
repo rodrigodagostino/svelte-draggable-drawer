@@ -1,37 +1,33 @@
 <script lang="ts">
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 	import { Drawer } from '$lib/index.js';
 	import { defaultRootProps } from './fixtures.js';
-	import { rootProps } from './stores.js';
+	import layoutState from './states.svelte.js';
 	import '$lib/styles.css';
 
 	onMount(() => {
-		$rootProps = { ...defaultRootProps };
+		layoutState.props = { ...defaultRootProps };
 	});
 
-	let isOpen: Drawer.RootProps['isOpen'] = false;
-
-	$: $rootProps = { isOpen };
-	const unsubscribe = rootProps.subscribe((value) => {
-		isOpen = value.isOpen;
-	});
-	onDestroy(unsubscribe);
+	let isOpen = $state<Drawer.RootProps['isOpen']>(false);
 </script>
 
 <svelte:head>
-	<title>Basic | Svelte Draggable Drawer</title>
+	<title>Basic — Svelte Draggable Drawer</title>
 </svelte:head>
 
-<h1 class="heading-1" style="margin-block-end: 1rem">Svelte Draggable Drawer</h1>
-<button class="button" on:click={() => (isOpen = !isOpen)}>Open drawer</button>
+<h1 style="margin-block-end: 1rem">Svelte Draggable Drawer</h1>
+<button class="button" onclick={() => (isOpen = !isOpen)}>Open drawer</button>
 
-<Drawer.Root {...$rootProps} bind:isOpen>
+<Drawer.Root {...layoutState.props} bind:isOpen>
 	<Drawer.Content>
-		<Drawer.Handle>
+		<Drawer.ContentHandle>
 			<span>Handle</span>
-		</Drawer.Handle>
-		<h1>Heading</h1>
-		<p>Paragraph</p>
+		</Drawer.ContentHandle>
+		<div style="display: flex; flex-direction: column; text-align: center">
+			<h1>Heading</h1>
+			<p>Paragraph</p>
+		</div>
 	</Drawer.Content>
 	<Drawer.Backdrop />
 </Drawer.Root>

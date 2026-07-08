@@ -1,51 +1,59 @@
 <script lang="ts">
 	import { version } from '$app/environment';
-	import { page } from '$app/stores';
-	import { rootProps } from './stores.js';
+	import { page } from '$app/state';
+	import layoutState from './states.svelte.js';
 	import { toKebabCase } from './utils.js';
+	import type { DrawerRootProps as RootProps } from '$lib/types/props.js';
+	import '@fontsource/rubik/400.css';
+	import '@fontsource/rubik/600.css';
+	import '@fontsource/jetbrains-mono';
 	import './styles.css';
 
-	let isMenuExpanded = false;
-	let isControlsExpanded = false;
+	interface Props {
+		children?: import('svelte').Snippet;
+	}
+	let { children }: Props = $props();
+
+	let isMenuExpanded = $state(false);
+	let isControlsExpanded = $state(false);
 
 	const links = [{ text: 'Basic', path: '/' }];
 
-	$: controls = Object.keys($rootProps).map((key) => ({
-		label: key,
-		type:
-			key === 'gap'
-				? 'number'
-				: key === 'transition'
-					? 'textarea'
-					: key === 'direction'
-						? 'select'
-						: 'checkbox',
-		id: toKebabCase(key),
-		...(key === 'gap' || key === 'transitionDuration' ? { min: 0 } : {}),
-		...(key === 'direction' ? { options: ['vertical', 'horizontal'] } : {}),
-		value: $rootProps[key as never],
-	}));
+	const controls = $derived(
+		Object.entries(layoutState.props).map(([key, value]) => ({
+			label: key,
+			type:
+				key === 'gap' || key === 'delay'
+					? 'number'
+					: key === 'transition'
+						? 'textarea'
+						: key === 'direction'
+							? 'select'
+							: 'checkbox',
+			id: toKebabCase(key),
+			...(key === 'gap' || key === 'transitionDuration' ? { min: 0 } : {}),
+			...(key === 'direction' ? { options: ['vertical', 'horizontal'] } : {}),
+			value,
+		}))
+	);
 
 	function handleFieldChange(e: Event) {
 		const target = e.target as HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement;
 		const { type, name, value } = target;
-		$rootProps = {
-			...$rootProps,
-			[name]:
-				type === 'checkbox'
-					? (target as HTMLInputElement).checked
-					: type === 'number'
-						? Number(value)
-						: type === 'textarea'
-							? JSON.parse(value)
-							: value,
-		};
+		layoutState.props[name as keyof RootProps] =
+			type === 'checkbox'
+				? (target as HTMLInputElement).checked
+				: type === 'number'
+					? Number(value)
+					: type === 'textarea'
+						? JSON.parse(value)
+						: value;
 	}
 </script>
 
 <svelte:window
-	on:keydown={(event) => {
-		const { key } = event;
+	onkeydown={(e) => {
+		const { key } = e;
 		if (key === 'Escape') {
 			isMenuExpanded = false;
 			isControlsExpanded = false;
@@ -53,12 +61,12 @@
 	}}
 />
 
-<div id="app" class="app" data-page-pathname={$page.url.pathname.replace('/', '')}>
+<div id="app" class="app" data-page-pathname={page.url.pathname.replace('/', '')}>
 	<button
 		class="app-nav-toggle button"
 		aria-controls="app-nav"
 		aria-expanded={isMenuExpanded}
-		on:click={() => (isMenuExpanded = !isMenuExpanded)}
+		onclick={() => (isMenuExpanded = !isMenuExpanded)}
 	>
 		{#if isMenuExpanded}
 			<svg
@@ -117,9 +125,9 @@
 				<span>v{version}</span>
 			</a>
 			<hr class="separator" />
-			{#each links as { text, path }}
+			{#each links as { text, path } (path)}
 				<!-- eslint-disable-next-line svelte/no-navigation-without-resolve -->
-				<a class="link" href={path} aria-current={$page.url.pathname === path ? 'page' : undefined}>
+				<a class="link" href={path} aria-current={page.url.pathname === path ? 'page' : undefined}>
 					{text}
 				</a>
 			{/each}
@@ -129,7 +137,7 @@
 		class="app-controls-toggle button"
 		aria-controls="app-controls"
 		aria-expanded={isControlsExpanded}
-		on:click={() => (isControlsExpanded = !isControlsExpanded)}
+		onclick={() => (isControlsExpanded = !isControlsExpanded)}
 	>
 		{#if isControlsExpanded}
 			<svg
@@ -200,7 +208,7 @@
 										name={label}
 										{min}
 										{value}
-										on:input={handleFieldChange}
+										oninput={handleFieldChange}
 									/>
 								{:else if type === 'textarea'}
 									<textarea
@@ -209,10 +217,9 @@
 										rows="4"
 										style="white-space: nowrap"
 										value={JSON.stringify(value, null, 2)}
-										on:input={handleFieldChange}
-									></textarea>
+										oninput={handleFieldChange}></textarea>
 								{:else if type === 'select'}
-									<select {id} name={label} {value} on:change={handleFieldChange}>
+									<select {id} name={label} {value} onchange={handleFieldChange}>
 										{#if options}
 											{#each options as option (option)}
 												<option value={option}>{option}</option>
@@ -225,7 +232,7 @@
 										type="checkbox"
 										name={label}
 										checked={value}
-										on:change={handleFieldChange}
+										onchange={handleFieldChange}
 									/>
 								{/if}
 							</td>
@@ -238,7 +245,7 @@
 	</aside>
 	<main class="app-main">
 		<div class="container">
-			<slot />
+			{@render children?.()}
 		</div>
 	</main>
 </div>
@@ -275,6 +282,7 @@
 		max-height: calc(100vh - 1.5rem);
 		max-height: calc(100dvh - 1.5rem);
 		background-color: var(--sdd-gray-500);
+		border-radius: 0.25rem;
 		box-shadow: var(--sdd-box-shadow-4);
 		position: fixed;
 		top: 0.75rem;
@@ -327,7 +335,7 @@
 		}
 
 		&[aria-current='page'] {
-			font-weight: 700;
+			font-weight: 600;
 			color: var(--sdd-white-rich);
 		}
 	}
@@ -343,6 +351,7 @@
 		width: 100%;
 		margin-block: 0.25rem;
 		border-style: solid;
+		border-width: 1px;
 		color: var(--sdd-gray-400);
 	}
 
@@ -364,6 +373,7 @@
 		max-width: calc(100% - 1.5rem);
 		max-height: calc(100% - 1.5rem);
 		background-color: var(--sdd-white);
+		border-radius: 0.25rem;
 		box-shadow: var(--sdd-box-shadow-4);
 		position: fixed;
 		right: 0.75rem;
@@ -422,7 +432,7 @@
 		}
 
 		& td {
-			font-family: monospace;
+			font-family: 'JetBrains Mono', monospace;
 		}
 
 		& label {
