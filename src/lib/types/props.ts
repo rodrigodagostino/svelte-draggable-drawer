@@ -5,3 +5,8 @@ export interface DrawerRootProps {
 	isOpen?: boolean;
 	children?: Snippet;
 }
+
+export interface DrawerContentProps {
+	ref?: HTMLDivElement | null;
+	children?: Snippet;
+}
