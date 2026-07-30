@@ -1,7 +1,7 @@
 {
 	"name": "@rodrigodagostino/svelte-draggable-drawer",
 	"description": "Create accessible, draggable drawers in Svelte, with keyboard, mouse, and touch support.",
-	"version": "0.1.0",
+	"version": "0.2.0",
 	"author": "Rodrigo D’Agostino <rodrigo.dagostino@proton.me>",
 	"keywords": [
 		"draggable",
