@@ -17,6 +17,10 @@
 		};
 	});
 
+	$effect(() => {
+		isOpen = rootState.props.isOpen || false;
+	});
+
 	const classes = $derived(['sdd-root', restProps.class]);
 	let pointerId: PointerEvent['pointerId'] | null = null;
 
