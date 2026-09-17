@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getDrawerRootState } from '$lib/states/drawer.svelte.js';
 	import type { DrawerContentProps as ContentProps } from '$lib/types/props.js';
+	import { applyRubberBand } from '$lib/utils/physics.js';
 
 	let {
 		ref = $bindable(null),
@@ -20,23 +21,33 @@
 	function getStyleTransform(...args: unknown[]) {
 		if (rootState.dragState === 'drag') {
 			if (!rootState.pointer || !rootState.pointerOrigin || !rootState.contentOrigin) return 'none';
-			// Prevent the drawer from being dragged above the top of the screen or below the bottom.
-			const y =
-				rootState.pointerOrigin.y > window.innerHeight / 2
-					? rootState.pointer.y > rootState.pointerOrigin.y
-						? rootState.pointerOrigin.y
-						: rootState.pointer.y
-					: rootState.pointer.y < rootState.pointerOrigin.y
-						? rootState.pointerOrigin.y
-						: rootState.pointer.y;
-			// Set the position of the content relative to the pointer.
-			const offset = rootState.contentOrigin.y - rootState.pointerOrigin.y;
 
-			return `translate3d(0, ${y + offset}px, 0)`;
+			const startY = rootState.pointerOrigin.y;
+			const currentY = rootState.pointer.y;
+			const offset = rootState.contentOrigin.y - startY;
+
+			// Calculate where the drawer would be without any resistance.
+			const rawY = currentY + offset;
+
+			const TOP_LIMIT = 0 + (rootState.handle?.getBoundingClientRect().height || 48);
+			const BOTTOM_LIMIT =
+				window.innerHeight - (rootState.handle?.getBoundingClientRect().height || 48);
+			let y = rawY;
+			const MAX_OVERDRAG = 120;
+
+			if (rawY < TOP_LIMIT) {
+				const overdrag = TOP_LIMIT - rawY;
+				y = TOP_LIMIT - applyRubberBand(overdrag, MAX_OVERDRAG);
+			} else if (rawY > BOTTOM_LIMIT) {
+				const overdrag = rawY - BOTTOM_LIMIT;
+				y = BOTTOM_LIMIT + applyRubberBand(overdrag, MAX_OVERDRAG);
+			}
+
+			return `translate3d(0, ${y}px, 0)`;
 		}
 
 		if (rootState.props.isOpen)
-			return `translate3d(0, calc(0% + ${rootState.handle?.getBoundingClientRect().height || 24}px), 0)`;
+			return `translate3d(0, calc(0% + ${rootState.handle?.getBoundingClientRect().height || 48}px), 0)`;
 
 		return `translate3d(0, calc(100% - ${rootState.handle?.getBoundingClientRect().height || 48}px), 0)`;
 	}
