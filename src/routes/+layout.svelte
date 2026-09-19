@@ -25,7 +25,7 @@
 			type:
 				key === 'gap' || key === 'delay'
 					? 'number'
-					: key === 'transition'
+					: key === 'range'
 						? 'textarea'
 						: key === 'direction'
 							? 'select'
