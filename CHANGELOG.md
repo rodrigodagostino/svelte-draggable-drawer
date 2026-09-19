@@ -7,6 +7,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] (2026-09-18)
+
+### Added
+
+- Apply rubber band effect when dragging past limits.
+- Add `range` prop to customize drawer start/end position.
+
+### Chores
+
+- Remove duplicated state context type definitions.
+
+### Docs
+
+- Add `range` prop control in demo pages layout.
+- Add NPM link in demo pages layout.
+
 ## [0.2.0] (2026-07-30)
 
 ### Changed
@@ -41,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update the «Basic» page to showcase the library.
 - Polish README.
 
-[unreleased]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/rodrigodagostino/svelte-sortable-list/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/rodrigodagostino/svelte-draggable-drawer/releases/tag/v0.1.0
