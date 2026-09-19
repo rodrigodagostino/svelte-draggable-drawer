@@ -1,6 +1,9 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import { RANGE_END_DEFAULT, RANGE_START_DEFAULT } from '$lib/constants/index.js';
 	import { getDrawerRootState } from '$lib/states/drawer.svelte.js';
 	import type { DrawerBackdropProps as BackdropProps } from '$lib/types/props.js';
+	import { toPixels } from '$lib/utils/index.js';
 
 	let { ref = $bindable(null), ...restProps }: BackdropProps & { class?: string } = $props();
 
@@ -10,26 +13,42 @@
 
 	const classes = $derived(['sdd-backdrop', restProps.class]);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	function getStyleOpacity(...args: unknown[]) {
-		if (rootState.dragState === 'drag' && rootState.pointer) {
-			return (rootState.pointer.y / offsetHeight / 2 - 0.5) * -1;
+	function getStyleOpacity() {
+		if (rootState.dragState.startsWith('drag') && rootState.pointer) {
+			const handleRect = rootState.handle?.getBoundingClientRect();
+			if (!handleRect) return 0;
+
+			const rangeStart = toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
+			const rangeEnd = toPixels(rootState.props.range?.end, RANGE_END_DEFAULT);
+			const windowHeightWithoutRange = window.innerHeight - rangeEnd - rangeStart;
+			const handleTop = Math.min(
+				Math.max((handleRect.top ?? 0) - rangeEnd, 0),
+				window.innerHeight - rangeStart
+			);
+			const opacity = (handleTop / windowHeightWithoutRange / 2 - 0.5) * -1;
+
+			return Math.max(Math.min(opacity, 0.5), 0);
 		}
-		if (rootState.props.isOpen) return 0.5;
-		return 0;
+
+		return rootState.props.isOpen ? 0.5 : 0;
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	function getStyleTransition(...args: unknown[]) {
-		if (rootState.dragState !== 'drag-start' && rootState.dragState !== 'drag')
-			return 'opacity 240ms';
+	function getStyleTransition() {
+		if (!rootState.dragState.startsWith('drag')) return 'opacity 240ms';
 		return 'none';
 	}
 
-	const styleOpacity = $derived(
-		getStyleOpacity(rootState.pointer, rootState.dragState, rootState.props.isOpen)
-	);
-	const styleTransition = $derived(getStyleTransition(rootState.dragState));
+	const styleOpacity = $derived.by(() => {
+		void rootState.pointer;
+		void rootState.dragState;
+		void rootState.props.isOpen;
+		return untrack(() => getStyleOpacity());
+	});
+
+	const styleTransition = $derived.by(() => {
+		void rootState.dragState;
+		return untrack(() => getStyleTransition());
+	});
 
 	const handleClick = () => {
 		rootState.props.isOpen = false;

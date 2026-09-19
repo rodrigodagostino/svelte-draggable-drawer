@@ -1,7 +1,8 @@
 import type { Snippet } from 'svelte';
 
 export interface DrawerRootProps {
-	ref?: HTMLDivElement | null;
+	ref?: HTMLElement | null;
+	range?: { start: string | number; end: string | number };
 	isOpen?: boolean;
 	children?: Snippet;
 }

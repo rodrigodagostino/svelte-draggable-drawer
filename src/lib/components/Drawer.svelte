@@ -1,8 +1,11 @@
 <script lang="ts">
+	import { RANGE_END_DEFAULT, RANGE_START_DEFAULT } from '$lib/constants/index.js';
 	import { setDrawerRootState } from '$lib/states/index.js';
 	import type { DrawerRootProps } from '$lib/types/props.js';
+
 	let {
 		ref = $bindable(null),
+		range = { start: RANGE_START_DEFAULT, end: RANGE_END_DEFAULT },
 		isOpen = $bindable(false),
 		children,
 		...restProps
@@ -13,6 +16,7 @@
 	$effect(() => {
 		rootState.props = {
 			ref,
+			range,
 			isOpen,
 		};
 	});

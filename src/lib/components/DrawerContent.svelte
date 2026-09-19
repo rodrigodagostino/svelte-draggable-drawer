@@ -1,7 +1,9 @@
 <script lang="ts">
+	import { untrack } from 'svelte';
+	import { RANGE_END_DEFAULT, RANGE_START_DEFAULT } from '$lib/constants/index.js';
 	import { getDrawerRootState } from '$lib/states/drawer.svelte.js';
 	import type { DrawerContentProps as ContentProps } from '$lib/types/props.js';
-	import { applyRubberBand } from '$lib/utils/physics.js';
+	import { applyRubberBand, toCSSLength, toPixels } from '$lib/utils/index.js';
 
 	let {
 		ref = $bindable(null),
@@ -17,8 +19,7 @@
 
 	const classes = $derived(['sdd-content', restProps.class]);
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
-	function getStyleTransform(...args: unknown[]) {
+	function getStyleTransform() {
 		if (rootState.dragState === 'drag') {
 			if (!rootState.pointer || !rootState.pointerOrigin || !rootState.contentOrigin) return 'none';
 
@@ -29,34 +30,37 @@
 			// Calculate where the drawer would be without any resistance.
 			const rawY = currentY + offset;
 
-			const TOP_LIMIT = 0 + (rootState.handle?.getBoundingClientRect().height || 48);
-			const BOTTOM_LIMIT =
-				window.innerHeight - (rootState.handle?.getBoundingClientRect().height || 48);
+			const START_LIMIT =
+				window.innerHeight - toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
+			const END_LIMIT = 0 + toPixels(rootState.props.range?.end, RANGE_END_DEFAULT);
 			let y = rawY;
 			const MAX_OVERDRAG = 120;
 
-			if (rawY < TOP_LIMIT) {
-				const overdrag = TOP_LIMIT - rawY;
-				y = TOP_LIMIT - applyRubberBand(overdrag, MAX_OVERDRAG);
-			} else if (rawY > BOTTOM_LIMIT) {
-				const overdrag = rawY - BOTTOM_LIMIT;
-				y = BOTTOM_LIMIT + applyRubberBand(overdrag, MAX_OVERDRAG);
+			if (rawY < END_LIMIT) {
+				const overdrag = END_LIMIT - rawY;
+				y = END_LIMIT - applyRubberBand(overdrag, MAX_OVERDRAG);
+			} else if (rawY > START_LIMIT) {
+				const overdrag = rawY - START_LIMIT;
+				y = START_LIMIT + applyRubberBand(overdrag, MAX_OVERDRAG);
 			}
 
 			return `translate3d(0, ${y}px, 0)`;
 		}
 
-		if (rootState.props.isOpen)
-			return `translate3d(0, calc(0% + ${rootState.handle?.getBoundingClientRect().height || 48}px), 0)`;
-
-		return `translate3d(0, calc(100% - ${rootState.handle?.getBoundingClientRect().height || 48}px), 0)`;
+		return rootState.props.isOpen
+			? `translate3d(0, calc(0% + ${toCSSLength(rootState.props.range?.end ?? RANGE_END_DEFAULT)}), 0)`
+			: `translate3d(0, calc(100% - ${toCSSLength(rootState.props.range?.start ?? RANGE_START_DEFAULT)}), 0)`;
 	}
 
-	const styleTransform = $derived(
-		getStyleTransform(rootState.pointer, rootState.dragState, rootState.props.isOpen)
-	);
+	const styleTransform = $derived.by(() => {
+		void rootState.pointer;
+		void rootState.dragState;
+		void rootState.props.isOpen;
+		return untrack(() => getStyleTransform());
+	});
+
 	const styleTransition = $derived(
-		rootState.dragState !== 'drag-start' && rootState.dragState !== 'drag'
+		!rootState.dragState.startsWith('drag')
 			? `transform 400ms cubic-bezier(0.32, 0.72, 0, 1)`
 			: 'none'
 	);
