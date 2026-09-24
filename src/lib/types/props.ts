@@ -3,6 +3,8 @@ import type { Snippet } from 'svelte';
 export interface DrawerRootProps {
 	ref?: HTMLElement | null;
 	range?: { start: string | number; end: string | number };
+	snapPoints?: (string | number)[];
+	activeSnapPoint?: { index: number; value: string | number } | null;
 	isOpen?: boolean;
 	children?: Snippet;
 }

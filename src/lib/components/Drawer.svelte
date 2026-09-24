@@ -1,11 +1,18 @@
 <script lang="ts">
-	import { RANGE_END_DEFAULT, RANGE_START_DEFAULT } from '$lib/constants/index.js';
+	import {
+		RANGE_END_DEFAULT,
+		RANGE_START_DEFAULT,
+		SNAP_POINT_OFFSET,
+	} from '$lib/constants/index.js';
 	import { setDrawerRootState } from '$lib/states/index.js';
 	import type { DrawerRootProps } from '$lib/types/props.js';
+	import { toPixels } from '$lib/utils/index.js';
 
 	let {
 		ref = $bindable(null),
 		range = { start: RANGE_START_DEFAULT, end: RANGE_END_DEFAULT },
+		snapPoints = [],
+		activeSnapPoint = $bindable(null),
 		isOpen = $bindable(false),
 		children,
 		...restProps
@@ -17,19 +24,22 @@
 		rootState.props = {
 			ref,
 			range,
+			snapPoints,
+			activeSnapPoint,
 			isOpen,
 		};
 	});
 
 	$effect(() => {
+		activeSnapPoint = rootState.activeSnapPoint ?? null;
 		isOpen = rootState.props.isOpen || false;
 	});
 
 	const classes = $derived(['sdd-root', restProps.class]);
 	let pointerId: PointerEvent['pointerId'] | null = null;
 
-	const TOP_THRESHOLD = 2 / 5;
-	const BOTTOM_THRESHOLD = 3 / 5;
+	const START_THRESHOLD = 2 / 5;
+	const END_THRESHOLD = 2 / 5;
 
 	let transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -61,10 +71,30 @@
 		rootState.dragState = 'drag';
 
 		rootState.pointer = { x: clientX, y: clientY };
-		rootState.props.isOpen =
-			rootState.pointerOrigin.y > window.innerHeight / 2
-				? clientY < window.innerHeight * BOTTOM_THRESHOLD
-				: clientY < window.innerHeight * TOP_THRESHOLD;
+		const handleTop = rootState.handle?.getBoundingClientRect()?.top ?? clientY;
+		const visibleHeight = window.innerHeight - handleTop;
+		const snapPoints = rootState.props.snapPoints ?? [];
+		const snapPointsInPx = (snapPoints ?? []).map((point) => toPixels(point, 0));
+
+		if (snapPointsInPx.length) {
+			const isBelowFirst = visibleHeight <= snapPointsInPx[0] - SNAP_POINT_OFFSET;
+			const isAboveLast = visibleHeight >= snapPointsInPx.at(-1)! + SNAP_POINT_OFFSET;
+
+			if (isBelowFirst || isAboveLast) {
+				rootState.activeSnapPoint = null;
+			} else {
+				const index = snapPointsInPx.findIndex(
+					(point) => Math.abs(visibleHeight - point) <= SNAP_POINT_OFFSET
+				);
+				if (index !== -1) rootState.activeSnapPoint = { index, value: snapPoints[index] };
+			}
+
+			rootState.props.isOpen = !isBelowFirst;
+		} else {
+			const threshold =
+				rootState.pointerOrigin.y > window.innerHeight / 2 ? START_THRESHOLD : END_THRESHOLD;
+			rootState.props.isOpen = handleTop < window.innerHeight * threshold;
+		}
 	}
 
 	function handlePointerUp() {

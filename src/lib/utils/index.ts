@@ -1,2 +1,3 @@
 export * from './conversion.ts';
-export * from './physics.js';
+export * from './geometry.ts';
+export * from './physics.ts';

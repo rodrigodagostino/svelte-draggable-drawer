@@ -47,6 +47,10 @@
 			return `translate3d(0, ${y}px, 0)`;
 		}
 
+		if (rootState.activeSnapPoint !== null) {
+			return `translate3d(0, calc(100% - ${toCSSLength(rootState.props.snapPoints![rootState.activeSnapPoint.index])}), 0)`;
+		}
+
 		return rootState.props.isOpen
 			? `translate3d(0, calc(0% + ${toCSSLength(rootState.props.range?.end ?? RANGE_END_DEFAULT)}), 0)`
 			: `translate3d(0, calc(100% - ${toCSSLength(rootState.props.range?.start ?? RANGE_START_DEFAULT)}), 0)`;

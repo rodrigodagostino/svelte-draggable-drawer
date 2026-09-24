@@ -3,11 +3,9 @@
 	import { RANGE_END_DEFAULT, RANGE_START_DEFAULT } from '$lib/constants/index.js';
 	import { getDrawerRootState } from '$lib/states/drawer.svelte.js';
 	import type { DrawerBackdropProps as BackdropProps } from '$lib/types/props.js';
-	import { toPixels } from '$lib/utils/index.js';
+	import { clamp, toPixels } from '$lib/utils/index.js';
 
 	let { ref = $bindable(null), ...restProps }: BackdropProps & { class?: string } = $props();
-
-	let offsetHeight: number = $state(0);
 
 	const rootState = getDrawerRootState();
 
@@ -15,19 +13,22 @@
 
 	function getStyleOpacity() {
 		if (rootState.dragState.startsWith('drag') && rootState.pointer) {
-			const handleRect = rootState.handle?.getBoundingClientRect();
-			if (!handleRect) return 0;
+			const handleTop = rootState.handle?.getBoundingClientRect().top ?? rootState.pointer.y;
 
 			const rangeStart = toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
-			const rangeEnd = toPixels(rootState.props.range?.end, RANGE_END_DEFAULT);
-			const windowHeightWithoutRange = window.innerHeight - rangeEnd - rangeStart;
-			const handleTop = Math.min(
-				Math.max((handleRect.top ?? 0) - rangeEnd, 0),
-				window.innerHeight - rangeStart
+			const rangeEnd = Math.max(
+				toPixels(rootState.props.range?.end, RANGE_END_DEFAULT),
+				rootState.props.snapPoints?.length && rootState.content
+					? rootState.content?.offsetHeight -
+							toPixels(rootState.props.snapPoints[0], RANGE_END_DEFAULT)
+					: RANGE_END_DEFAULT
 			);
-			const opacity = (handleTop / windowHeightWithoutRange / 2 - 0.5) * -1;
+			const availableHeight = window.innerHeight - rangeEnd - rangeStart;
+			const handleOffset = clamp(handleTop - rangeEnd, 0, window.innerHeight - rangeStart);
+			const closedProgress = handleOffset / availableHeight;
+			const opacity = 0.5 - closedProgress / 2;
 
-			return Math.max(Math.min(opacity, 0.5), 0);
+			return clamp(opacity, 0, 0.5);
 		}
 
 		return rootState.props.isOpen ? 0.5 : 0;
@@ -51,13 +52,13 @@
 	});
 
 	const handleClick = () => {
+		rootState.activeSnapPoint = null;
 		rootState.props.isOpen = false;
 	};
 </script>
 
 <div
 	bind:this={ref}
-	bind:offsetHeight
 	class={classes}
 	style:opacity={styleOpacity}
 	style:transition={styleTransition}

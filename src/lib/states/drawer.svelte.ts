@@ -10,6 +10,7 @@ class DrawerRootState {
 	pointer: { x: number; y: number } | null = $state.raw(null);
 	pointerOrigin: { x: number; y: number } | null = $state.raw(null);
 	contentOrigin: { x: number; y: number } | null = $state.raw(null);
+	activeSnapPoint: { index: number; value: string | number } | null = $state(null);
 }
 
 const KEY = Symbol('Drawer.RootState');
