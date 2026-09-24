@@ -26,6 +26,12 @@
 	--sdd-black: #15151a;
 	--sdd-black-rich: #000;
 
+	/* Thank you, TailwindCSS :) */
+	/* https://tailwindcss.com/docs/colors */
+	--sdd-indigo-500: oklch(58.5% 0.233 277.117);
+	--sdd-indigo-600: oklch(51.1% 0.262 276.966);
+	--sdd-indigo-800: oklch(39.8% 0.195 277.366);
+
 	--sdd-box-shadow-1:
 		0 1px 1px rgba(54, 57, 90, 0.1), 0 2px 2px rgba(54, 57, 90, 0.1),
 		0 4px 4px rgba(54, 57, 90, 0.1), 0 6px 8px rgba(54, 57, 90, 0.1),
@@ -207,6 +213,19 @@ code {
 
 	&:active {
 		background-color: var(--sdd-gray-950);
+	}
+
+	&[aria-pressed="true"] {
+		background-color: var(--sdd-indigo-600);
+
+		&:focus-visible,
+		&:hover {
+			background-color: var(--sdd-indigo-500);
+		}
+
+		&:active {
+			background-color: var(--sdd-indigo-800);
+		}
 	}
 
 	input + & {

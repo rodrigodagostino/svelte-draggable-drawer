@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { version } from '$app/environment';
 	import { page } from '$app/state';
+	import Markers from './components/Markers.svelte';
 	import layoutState from './states.svelte.js';
 	import { toKebabCase } from './utils.js';
 	import type { DrawerRootProps as RootProps } from '$lib/types/props.js';
@@ -16,6 +17,7 @@
 
 	let isMenuExpanded = $state(false);
 	let isControlsExpanded = $state(false);
+	let isMarkersVisible = $state(false);
 
 	const links = [
 		{ text: 'Basic', path: '/' },
@@ -251,6 +253,38 @@
 			</table>
 		</div>
 	</aside>
+	<button
+		class="app-markers-toggle button"
+		aria-controls="app-controls"
+		aria-pressed={isMarkersVisible}
+		onclick={() => (isMarkersVisible = !isMarkersVisible)}
+	>
+		<svg
+			width="24"
+			height="24"
+			viewBox="0 0 24 24"
+			fill="none"
+			stroke="currentColor"
+			stroke-linecap="round"
+			stroke-linejoin="round"
+			stroke-width="2"
+			aria-hidden="true"
+		>
+			<path d="M14 15h1" />
+			<path d="M14 9h1" />
+			<path d="M19 15h2" />
+			<path d="M19 9h2" />
+			<path d="M3 15h2" />
+			<path d="M3 9h2" />
+			<path d="M9 15h1" />
+			<path d="M9 9h1" />
+			<rect width="18" height="18" x="3" y="3" rx="2" />
+		</svg>
+		<span class="sr-only">{isControlsExpanded ? 'Hide markers' : 'Show markers'}</span>
+	</button>
+	{#if isMarkersVisible}
+		<Markers />
+	{/if}
 	<main class="app-main">
 		<div class="container">
 			{@render children?.()}
@@ -467,6 +501,18 @@
 			max-width: 100%;
 			padding: 0.25rem 0.25rem 0.25rem 0.5rem;
 			border-radius: 0.25rem;
+		}
+	}
+
+	.app-markers-toggle {
+		position: fixed;
+		bottom: 1rem;
+		right: 5.5rem;
+		z-index: 10011;
+
+		@media (min-width: 48em) {
+			bottom: 1.5rem;
+			right: 6rem;
 		}
 	}
 
