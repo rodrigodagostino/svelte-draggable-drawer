@@ -24,7 +24,7 @@
 		rootState.props = {
 			ref,
 			range,
-			snapPoints,
+			snapPoints: snapPoints.sort((a, b) => toPixels(a, 0) - toPixels(b, 0)),
 			activeSnapPoint,
 			isOpen,
 		};
