@@ -17,7 +17,10 @@
 	let isMenuExpanded = $state(false);
 	let isControlsExpanded = $state(false);
 
-	const links = [{ text: 'Basic', path: '/' }];
+	const links = [
+		{ text: 'Basic', path: '/' },
+		{ text: 'With snap points', path: '/with-snap-points' },
+	];
 
 	const controls = $derived(
 		Object.entries(layoutState.props).map(([key, value]) => ({
@@ -25,7 +28,7 @@
 			type:
 				key === 'gap' || key === 'delay'
 					? 'number'
-					: key === 'range'
+					: key === 'range' || key === 'snapPoints'
 						? 'textarea'
 						: key === 'direction'
 							? 'select'
