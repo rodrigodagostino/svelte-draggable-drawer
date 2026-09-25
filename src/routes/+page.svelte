@@ -9,7 +9,7 @@
 		layoutState.props = { ...defaultRootProps };
 	});
 
-	let isOpen = $state<Drawer.RootProps['isOpen']>(false);
+	let isOpen = $derived<Drawer.RootProps['isOpen']>(layoutState.props.isOpen);
 </script>
 
 <svelte:head>
