@@ -6,7 +6,7 @@
 	} from '$lib/constants/index.js';
 	import { setDrawerRootState } from '$lib/states/index.js';
 	import type { DrawerRootProps } from '$lib/types/props.js';
-	import { toPixels } from '$lib/utils/index.js';
+	import { isOrResidesInInteractiveElement, toPixels } from '$lib/utils/index.js';
 
 	let {
 		ref = $bindable(null),
@@ -50,13 +50,25 @@
 		const isOrResidesInContent = target.closest('.sdd-content');
 		if (!isOrResidesInContent) return;
 
+		const isOrResidesInInteractiveElem = isOrResidesInInteractiveElement(target, rootState.content);
+		// Stop non-main buttons from interacting with the drawer.
+		if (e.button !== 0) {
+			// Let non-main buttons act normally on interactive elements.
+			if (!isOrResidesInInteractiveElem) e.preventDefault();
+			return;
+		}
+
 		// Prevent dragging if the current drawer contains a content handle, but we’re not dragging from it.
 		const hasHandle = !!rootState.handle;
 		const isOrResidesInHandle = target.closest('.sdd-content-handle');
-		if (hasHandle && !isOrResidesInHandle) {
+		if (hasHandle && !isOrResidesInHandle && !isOrResidesInInteractiveElem) {
 			e.preventDefault();
 			return;
 		}
+
+		// Prevent dragging if the current drawer contains an interactive element and
+		// we’re also not dragging from a handle inside that interactive element.
+		if (isOrResidesInInteractiveElem && !isOrResidesInHandle) return;
 
 		const draggedElem = rootState.handle ?? rootState.content;
 		pointerId = e.pointerId;
