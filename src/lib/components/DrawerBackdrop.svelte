@@ -13,8 +13,10 @@
 
 	function getStyleOpacity() {
 		if (rootState.dragState.startsWith('drag') && rootState.pointer) {
-			const handleTop = rootState.handle?.getBoundingClientRect().top ?? rootState.pointer.y;
-
+			const draggedTop =
+				rootState.handle?.getBoundingClientRect().top ??
+				rootState.content?.getBoundingClientRect().top ??
+				rootState.pointer.y;
 			const rangeStart = toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
 			const rangeEnd = Math.max(
 				toPixels(rootState.props.range?.end, RANGE_END_DEFAULT),
@@ -24,7 +26,7 @@
 					: RANGE_END_DEFAULT
 			);
 			const availableHeight = window.innerHeight - rangeEnd - rangeStart;
-			const handleOffset = clamp(handleTop - rangeEnd, 0, window.innerHeight - rangeStart);
+			const handleOffset = clamp(draggedTop - rangeEnd, 0, window.innerHeight - rangeStart);
 			const closedProgress = handleOffset / availableHeight;
 			const opacity = 0.5 - closedProgress / 2;
 

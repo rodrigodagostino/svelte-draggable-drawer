@@ -44,21 +44,33 @@
 	let transitionTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	function handlePointerDown(e: PointerEvent) {
-		const target = e.target as HTMLElement;
-		if (!rootState.handle || !target.closest('[data-role="handle"]') || !rootState.content) return;
+		if (!rootState.content) return;
 
+		const target = e.target as HTMLElement;
+		const isOrResidesInContent = target.closest('.sdd-content');
+		if (!isOrResidesInContent) return;
+
+		// Prevent dragging if the current drawer contains a content handle, but we’re not dragging from it.
+		const hasHandle = !!rootState.handle;
+		const isOrResidesInHandle = target.closest('.sdd-content-handle');
+		if (hasHandle && !isOrResidesInHandle) {
+			e.preventDefault();
+			return;
+		}
+
+		const draggedElem = rootState.handle ?? rootState.content;
 		pointerId = e.pointerId;
-		rootState.handle.setPointerCapture(pointerId);
+		draggedElem.setPointerCapture(pointerId);
 		rootState.pointer = { x: e.clientX, y: e.clientY };
 		rootState.pointerOrigin = { x: e.clientX, y: e.clientY };
 		rootState.contentOrigin = rootState.content.getBoundingClientRect();
 		rootState.dragState = 'drag-start';
 
-		rootState.handle.addEventListener('pointermove', handlePointerMove);
-		rootState.handle.addEventListener(
+		draggedElem.addEventListener('pointermove', handlePointerMove);
+		draggedElem.addEventListener(
 			'pointerup',
 			() => {
-				rootState.handle?.removeEventListener('pointermove', handlePointerMove);
+				draggedElem?.removeEventListener('pointermove', handlePointerMove);
 				handlePointerUp();
 			},
 			{ once: true }
@@ -71,8 +83,11 @@
 		rootState.dragState = 'drag';
 
 		rootState.pointer = { x: clientX, y: clientY };
-		const handleTop = rootState.handle?.getBoundingClientRect()?.top ?? clientY;
-		const visibleHeight = window.innerHeight - handleTop;
+		const draggedTop =
+			rootState.handle?.getBoundingClientRect()?.top ??
+			rootState.content?.getBoundingClientRect()?.top ??
+			clientY;
+		const visibleHeight = window.innerHeight - draggedTop;
 		const snapPoints = rootState.props.snapPoints ?? [];
 		const snapPointsInPx = (snapPoints ?? []).map((point) => toPixels(point, 0));
 
@@ -93,7 +108,7 @@
 		} else {
 			const threshold =
 				rootState.pointerOrigin.y > window.innerHeight / 2 ? START_THRESHOLD : END_THRESHOLD;
-			rootState.props.isOpen = handleTop < window.innerHeight * threshold;
+			rootState.props.isOpen = draggedTop < window.innerHeight * threshold;
 		}
 	}
 
@@ -130,6 +145,11 @@
 	}
 </script>
 
+<pre style="position: fixed; top: 2rem; left: 2rem;">
+	<code>activeSnapPoint: {JSON.stringify(rootState.activeSnapPoint)}</code>
+	<code>isOpen: {JSON.stringify(isOpen)}</code>
+</pre>
+
 <div class={classes} data-drag-state={rootState.dragState} onpointerdown={handlePointerDown}>
 	{@render children?.()}
 </div>
@@ -141,15 +161,9 @@
 		pointer-events: none;
 		z-index: 9999;
 
-		&:not(:has(.sdd-content-handle)),
-		& :global(.sdd-content-handle) {
+		/* Prevent touch gestures during a pointer drag. */
+		&[data-drag-state*='ptr'] {
 			touch-action: none;
-			cursor: grab;
-		}
-
-		&[data-drag-state*='drag'],
-		&[data-drag-state*='drag'] :global(.sdd-content-handle) {
-			cursor: grabbing;
 		}
 	}
 </style>

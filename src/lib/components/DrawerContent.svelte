@@ -75,6 +75,7 @@
 	class={classes}
 	style:transform={styleTransform}
 	style:transition={styleTransition}
+	data-drag-state={rootState.dragState}
 >
 	{@render children?.()}
 </div>
@@ -88,7 +89,19 @@
 		margin-inline: auto;
 		pointer-events: auto;
 		position: relative;
+		user-select: none;
 		z-index: 1;
+
+		&:not(:has(.sdd-content-handle)),
+		& :global(.sdd-content-handle) {
+			touch-action: none;
+			cursor: grab;
+		}
+
+		&[data-drag-state*='drag'],
+		&[data-drag-state*='drag'] :global(.sdd-content-handle) {
+			cursor: grabbing;
+		}
 	}
 
 	@media (min-width: 48em) {
