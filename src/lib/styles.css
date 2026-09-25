@@ -1,6 +1,11 @@
 .sdd-content {
+	padding: 1.25rem;
 	background-color: var(--sdd-white);
 	border-radius: 1rem 1rem 0 0;
+
+	&:has(.sdd-content-handle) {
+		padding-block-start: 0;
+	}
 
 	&::after {
 		content: "";
