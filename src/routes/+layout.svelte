@@ -21,6 +21,7 @@
 
 	const links = [
 		{ text: 'Basic', path: '/' },
+		{ text: 'With handle', path: '/with-handle' },
 		{ text: 'With snap points', path: '/with-snap-points' },
 	];
 
