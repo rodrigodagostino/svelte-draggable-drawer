@@ -17,20 +17,24 @@
 				rootState.handle?.getBoundingClientRect().top ??
 				rootState.content?.getBoundingClientRect().top ??
 				rootState.pointer.y;
-			const rangeStart = toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
-			const rangeEnd = Math.max(
-				toPixels(rootState.props.range?.end, RANGE_END_DEFAULT),
-				rootState.props.snapPoints?.length && rootState.content
-					? rootState.content?.offsetHeight -
-							toPixels(rootState.props.snapPoints[0], RANGE_END_DEFAULT)
-					: RANGE_END_DEFAULT
-			);
-			const availableHeight = window.innerHeight - rangeEnd - rangeStart;
-			const handleOffset = clamp(draggedTop - rangeEnd, 0, window.innerHeight - rangeStart);
-			const closedProgress = handleOffset / availableHeight;
-			const opacity = 0.5 - closedProgress / 2;
+			const currentReveal = window.innerHeight - draggedTop;
 
-			return clamp(opacity, 0, 0.5);
+			const rangeStart = toPixels(rootState.props.range?.start, RANGE_START_DEFAULT);
+			const rangeEnd = toPixels(rootState.props.range?.end, RANGE_END_DEFAULT);
+			const contentHeight = rootState.content?.offsetHeight ?? 0;
+			// Reveal amount at “fully open”, which is capped to the content’s own height,
+			// since it may no longer span the full viewport.
+			const openLimit = Math.min(contentHeight, window.innerHeight - rangeEnd);
+			// Treat the first (smallest) snap point as the “open” reference for opacity.
+			const openReveal = rootState.props.snapPoints?.length
+				? Math.min(toPixels(rootState.props.snapPoints[0], RANGE_END_DEFAULT), openLimit)
+				: openLimit;
+
+			const availableHeight = openReveal - rangeStart;
+			const handleOffset = clamp(currentReveal - rangeStart, 0, availableHeight);
+			const openProgress = handleOffset / availableHeight;
+
+			return clamp(openProgress / 2, 0, 0.5);
 		}
 
 		return rootState.props.isOpen ? 0.5 : 0;
