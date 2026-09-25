@@ -101,8 +101,6 @@
 		bottom: 0;
 		display: flex;
 		flex-direction: column;
-		width: calc(100% - 2rem);
-		margin-inline: auto;
 		pointer-events: auto;
 		user-select: none;
 		z-index: 1;
