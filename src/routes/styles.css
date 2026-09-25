@@ -156,6 +156,15 @@ body {
 	min-height: 100dvh;
 }
 
+h2 {
+	font-size: 2rem;
+}
+
+ol,
+ul {
+	padding-inline-start: 1.5rem;
+}
+
 code {
 	background-color: var(--sdd-gray-200);
 	border-radius: 0.25rem;
@@ -174,26 +183,39 @@ code {
 }
 
 .form {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 0.75rem;
+	max-width: 30rem;
+	margin-inline: auto;
+}
+
+.form-field {
 	display: flex;
-	max-width: 100%;
-	margin-top: 3rem;
+	flex-direction: column;
+	gap: 0.25rem;
+	align-items: start;
 }
 
 .form-input {
 	flex: 1;
-	border: none;
-	border: 0.0625rem solid var(--sdd-gray-300);
-	padding-inline: 0.75rem;
+	width: 100%;
+	padding: 0.5rem;
 	border-radius: 0.25rem;
+	border: 0.0625rem solid var(--sdd-gray-300);
+}
 
-	&:has(+ .button) {
-		border-right: none;
-		border-radius: 0.25rem 0 0 0.25rem;
-	}
+.form-textarea {
+	flex: 1;
+	width: 100%;
+	padding: 0.5rem;
+	border-radius: 0.25rem;
+	border: 0.0625rem solid var(--sdd-gray-300);
 }
 
 .button {
 	display: flex;
+	justify-content: center;
 	align-items: center;
 	height: 3rem;
 	padding: 0.75em 1em;
@@ -231,4 +253,24 @@ code {
 	input + & {
 		border-radius: 0 0.25rem 0.25rem 0;
 	}
+}
+
+.mb-4 {
+	margin-block: 1rem;
+}
+
+.mbe-4 {
+	margin-block-end: 1rem;
+}
+
+.text-center {
+	text-align: center;
+}
+
+.col-start-2 {
+	grid-column-start: 2;
+}
+
+.col-span-2 {
+	grid-column: span 2;
 }

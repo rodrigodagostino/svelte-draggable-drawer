@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { Drawer } from '$lib/index.js';
+	import DummyContent from './components/DummyContent.svelte';
 	import { defaultRootProps } from './fixtures.js';
 	import layoutState from './states.svelte.js';
 	import '$lib/styles.css';
@@ -16,18 +17,11 @@
 	<title>Basic — Svelte Draggable Drawer</title>
 </svelte:head>
 
-<h1 style="margin-block-end: 1rem">Svelte Draggable Drawer</h1>
-<button class="button" onclick={() => (isOpen = !isOpen)}>Open drawer</button>
+<DummyContent type="landing" bind:isOpen />
 
 <Drawer.Root {...layoutState.props} bind:isOpen>
 	<Drawer.Content>
-		<Drawer.ContentHandle>
-			<span>Handle</span>
-		</Drawer.ContentHandle>
-		<div style="display: flex; flex-direction: column; text-align: center">
-			<h1>Heading</h1>
-			<p>Paragraph</p>
-		</div>
+		<DummyContent />
 	</Drawer.Content>
 	<Drawer.Backdrop />
 </Drawer.Root>
