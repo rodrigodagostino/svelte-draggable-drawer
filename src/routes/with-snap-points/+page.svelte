@@ -25,7 +25,7 @@
 
 <Drawer.Root {...layoutState.props} bind:isOpen>
 	<Drawer.Content>
-		<DummyContent type="drawer" />
+		<DummyContent type="drawer-extended" />
 	</Drawer.Content>
 	<Drawer.Backdrop />
 </Drawer.Root>
