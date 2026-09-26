@@ -157,11 +157,6 @@
 	}
 </script>
 
-<pre style="position: fixed; top: 2rem; left: 2rem;">
-	<code>activeSnapPoint: {JSON.stringify(rootState.activeSnapPoint)}</code>
-	<code>isOpen: {JSON.stringify(isOpen)}</code>
-</pre>
-
 <div class={classes} data-drag-state={rootState.dragState} onpointerdown={handlePointerDown}>
 	{@render children?.()}
 </div>
