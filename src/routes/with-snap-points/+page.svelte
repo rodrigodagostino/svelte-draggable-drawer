@@ -10,7 +10,7 @@
 		layoutState.props = {
 			...defaultRootProps,
 			range: { start: 80, end: 48 },
-			snapPoints: [228, 600, '80%'],
+			snapPoints: [228, 592],
 		};
 	});
 
