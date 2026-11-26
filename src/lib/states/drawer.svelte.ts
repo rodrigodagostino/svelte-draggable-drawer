@@ -4,7 +4,7 @@ import type { DrawerRootProps as RootProps } from '$lib/types/index.js';
 class DrawerRootState {
 	ref: HTMLElement | null = $state(null);
 	props: RootProps = $state({});
-	dragState: 'idle' | 'drag-start' | 'drag' | 'drop' = $state('idle');
+	dragState: 'idle' | 'drag-starting' | 'dragging' | 'snapping' = $state('idle');
 	content: HTMLElement | null = $state(null);
 	handle: HTMLButtonElement | null = $state(null);
 	pointer: { x: number; y: number } | null = $state.raw(null);

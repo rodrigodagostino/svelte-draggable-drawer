@@ -20,7 +20,7 @@
 
 	const rootState = setDrawerRootState();
 
-	$effect(() => {
+	$effect.pre(() => {
 		rootState.props = {
 			ref,
 			range,
@@ -76,7 +76,7 @@
 		rootState.pointer = { x: e.clientX, y: e.clientY };
 		rootState.pointerOrigin = { x: e.clientX, y: e.clientY };
 		rootState.contentOrigin = rootState.content.getBoundingClientRect();
-		rootState.dragState = 'drag-start';
+		rootState.dragState = 'drag-starting';
 
 		draggedElem.addEventListener('pointermove', handlePointerMove);
 		draggedElem.addEventListener(
@@ -92,7 +92,7 @@
 	async function handlePointerMove({ clientX, clientY }: PointerEvent) {
 		if (!rootState.content || !rootState.pointerOrigin) return;
 
-		rootState.dragState = 'drag';
+		rootState.dragState = 'dragging';
 
 		rootState.pointer = { x: clientX, y: clientY };
 		const draggedTop =
@@ -127,7 +127,7 @@
 	function handlePointerUp() {
 		if (!rootState.pointerOrigin || !rootState.content) return;
 
-		rootState.dragState = 'drop';
+		rootState.dragState = 'snapping';
 
 		function handleTransitionEnd({ propertyName }: TransitionEvent) {
 			if (propertyName === 'transform') {

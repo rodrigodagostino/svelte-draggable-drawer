@@ -29,7 +29,7 @@
 			window.innerHeight - toPixels(rootState.props.range?.end, RANGE_END_DEFAULT)
 		);
 
-		if (rootState.dragState === 'drag') {
+		if (rootState.dragState === 'dragging') {
 			if (!rootState.pointer || !rootState.pointerOrigin || !rootState.contentOrigin)
 				return 'translate3d(0, 100%, 0)';
 
