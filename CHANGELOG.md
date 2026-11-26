@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.3] (2026-11-25)
+
+### Changed
+
+- [BREAKING] Rename `dragState` values for clarity.
+
+### Docs
+
+- Change version number position in layout menu.
+
 ## [0.4.2] (2026-09-25)
 
 ### Fixed
@@ -113,7 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Update the «Basic» page to showcase the library.
 - Polish README.
 
-[unreleased]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.4.2...HEAD
+[unreleased]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.4.3...HEAD
+[0.4.3]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.4.2...v0.4.3
 [0.4.2]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.4.1...v0.4.2
 [0.4.1]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.4.0...v0.4.1
 [0.4.0]: https://github.com/rodrigodagostino/svelte-draggable-drawer/compare/v0.3.0...v0.4.0
